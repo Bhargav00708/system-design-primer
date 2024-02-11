@@ -881,6 +881,8 @@ Both masters serve reads and writes and coordinate with each other on writes.  I
   <i><a href=https://www.youtube.com/watch?v=kKjm4ehYiMs>Source: Scaling up to your first 10 million users</a></i>
 </p>
 
+<b>In short federation means verticle spliting of db means if you have different service data in your table like profile,like and comment so you will create 3 individual table of it.</b> 
+
 Federation (or functional partitioning) splits up databases by function.  For example, instead of a single, monolithic database, you could have three databases: **forums**, **users**, and **products**, resulting in less read and write traffic to each database and therefore less replication lag.  Smaller databases result in more data that can fit in memory, which in turn results in more cache hits due to improved cache locality.  With no single central master serializing writes you can write in parallel, increasing throughput.
 
 ##### Disadvantage(s): federation
@@ -901,6 +903,8 @@ Federation (or functional partitioning) splits up databases by function.  For ex
   <br/>
   <i><a href=http://www.slideshare.net/jboner/scalability-availability-stability-patterns/>Source: Scalability, availability, stability, patterns</a></i>
 </p>
+
+<b>In short sharding means you are spliting your large amount of data into small chunk in different table example tinder divides it's user table data into geo location vise into differnt tables</b>
 
 Sharding distributes data across different databases such that each database can only manage a subset of the data.  Taking a users database as an example, as the number of users increases, more shards are added to the cluster.
 
