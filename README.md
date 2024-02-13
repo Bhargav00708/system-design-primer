@@ -1137,6 +1137,46 @@ Sample data well-suited for NoSQL:
 
 ## Cache
 
+<b> Write through and write back cache</b>
+
+<b>Bhargav start </b>
+
+Yes, you're correct in the general description of how data handling differs between write-through and write-back cache policies.
+
+In a write-through cache:
+
+1. Data is first written to the cache.
+2. Then, the data is immediately written through to the main memory (and potentially to the database), ensuring that both the cache and main memory (and database) are always synchronized.
+
+In a write-back cache:
+
+1. Data is first written to the cache.
+2. Then, it's managed asynchronously, meaning it's not immediately written back to the main memory or database. Instead, it stays in the cache until it's evicted or until certain conditions are met (such as cache line replacement, cache flushing, or cache coherence requirements).
+3. At some later point, the modified data in the cache is written back to the main memory, and potentially to the database. This write-back process can occur based on various policies and conditions, such as cache eviction policies or system load.
+
+So, in write-through caching, data is always synchronized between the cache and main memory (and database) immediately, while in write-back caching, data is initially written to the cache and then asynchronously written back to the main memory and potentially the database at a later time.
+
+One real-time example that illustrates the difference between write-through and write-back caching can be found in a web server scenario, particularly when dealing with session data.
+
+Consider a web application where user session data needs to be stored and updated frequently. This session data could include information like user preferences, shopping cart contents, or authentication tokens.
+
+In a write-through caching scenario:
+
+1. When a user logs in or updates their session data, the changes are immediately written to the cache.
+2. Simultaneously, the data is also written through to the main memory and potentially to the database to ensure durability and consistency across the system.
+3. This immediate synchronization ensures that the session data is always up-to-date and consistent, but it may introduce higher latency due to the additional write operations.
+
+In a write-back caching scenario:
+
+1. When a user logs in or updates their session data, the changes are first written to the cache.
+2. The data stays in the cache for a certain period, allowing for faster access for subsequent reads or writes.
+3. Meanwhile, the system asynchronously manages the cache and periodically flushes the modified data back to the main memory and potentially to the database.
+4. This asynchronous approach can improve overall system performance by reducing the number of immediate write operations to the main memory and database, but it introduces the risk of data inconsistency if a system failure occurs before the changes are flushed to durable storage.
+
+So, in this example, write-through caching ensures immediate consistency between the cache, main memory, and database, while write-back caching prioritizes performance by delaying the writes to the main memory and database, thus introducing a slight risk of data inconsistency in exchange for improved performance.
+
+<b> Bhargav end </b>
+
 <p align="center">
   <img src="images/Q6z24La.png">
   <br/>
@@ -1164,6 +1204,18 @@ Caches can be located on the client side (OS or browser), [server side](#reverse
 Your database usually includes some level of caching in a default configuration, optimized for a generic use case.  Tweaking these settings for specific usage patterns can further boost performance.
 
 ### Application caching
+
+<b>
+Redis manages persistent storage through two main mechanisms: snapshots and append-only files (AOF).
+
+1. **Snapshots**: Redis periodically saves a snapshot of the dataset to disk. This snapshot contains the state of the dataset at the moment of the snapshot. Redis can perform snapshots in two ways:
+
+   - **RDB (Redis DataBase) snapshots**: This is the default mechanism for persistence in Redis. RDB snapshots create a binary representation of the dataset, which is essentially a point-in-time snapshot. Redis can be configured to take snapshots automatically based on time or upon a certain number of writes to the dataset. While RDB snapshots are efficient for backups and full dataset restores, they may lead to some data loss if Redis crashes between two snapshot saves.
+
+2. **Append-Only Files (AOF)**: AOF persistence logs every write operation received by the server, thus creating a log of all the operations that modify the dataset. This log is written to disk in an append-only fashion. In case of a server crash, Redis can replay the AOF log to reconstruct the dataset. AOF persistence ensures a much finer level of data integrity compared to RDB snapshots because it logs each operation, but it may lead to larger file sizes compared to RDB snapshots.
+
+Redis allows you to use either one of these mechanisms or both together for added data safety. You can configure Redis to use both persistence methods simultaneously, where the AOF log is used for point-in-time recovery and RDB snapshots are used for backups. Additionally, you can configure Redis to automatically rewrite the AOF file in the background to maintain its size and prevent it from growing too large.
+</b>
 
 In-memory caches such as Memcached and Redis are key-value stores between your application and your data storage.  Since the data is held in RAM, it is much faster than typical databases where data is stored on disk.  RAM is more limited than disk, so [cache invalidation](https://en.wikipedia.org/wiki/Cache_algorithms) algorithms such as [least recently used (LRU)](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)) can help invalidate 'cold' entries and keep 'hot' data in RAM.
 
